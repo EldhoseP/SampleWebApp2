@@ -1,0 +1,43 @@
+﻿@model ExampleSetup.Models.CredentialsModel
+
+
+<hgroup class="title">
+    <h1>Setup Connection to Direct ID</h1>
+</hgroup>
+
+<section id="form">
+    <h2>Use a local account to log in.</h2>
+    @using (Html.BeginForm("Connect", "Home"))
+    {
+        <fieldset>
+            <legend>Connection Details Form</legend>
+            <ol>
+                <li>
+                    @Html.LabelFor(m => m.API)
+                    @Html.TextBoxFor(m => m.API)
+                </li>
+                <li>
+                    @Html.LabelFor(m => m.ClientID)
+                    @Html.TextBoxFor(m => m.ClientID)
+                </li>
+                <li>
+                    @Html.LabelFor(m => m.SecretKey)
+                    @Html.TextBoxFor(m => m.SecretKey)
+                </li>
+                <li>
+                    @Html.LabelFor(m => m.ResourceID)
+                    @Html.TextBoxFor(m => m.ResourceID)
+                </li>
+                <li>
+                    @Html.LabelFor(m => m.Version)
+                    @Html.TextBoxFor(m => m.Version)
+                </li>
+                <li>
+                    @Html.LabelFor(m => m.Authority)
+                    @Html.TextBoxFor(m => m.Authority)
+                </li>
+            </ol>
+            <input type="submit" value="Setup Connection" />
+        </fieldset>
+    }
+</section>
