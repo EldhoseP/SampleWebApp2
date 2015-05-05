@@ -1,5 +1,5 @@
-# java_sample_web_app
-This project demonstrates the  method used to implement the widget in Java
+# dotnet_sample_web_app
+This project demonstrates the  method used to implement the widget in C#.
 
 ### Pre requisites
 
