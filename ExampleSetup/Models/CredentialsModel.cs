@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Web;
 
 namespace ExampleSetup.Models
@@ -14,17 +13,24 @@ namespace ExampleSetup.Models
         [Required]
         [Display(Name = "Client ID")]
         public string ClientID { get; set; }
+
+        /// <remarks>
+        /// To help ensure that the application is secure, this secret key should never
+        /// appear in client-side code.
+        /// In other words, API calls made using this value should only be made using
+        /// server-side code.
+        /// </remarks>
         [Required]
         [Display(Name = "Secret Key")]
-        public String SecretKey { get; set; }
+        public string SecretKey { get; set; }
         [Required]
         [Display(Name = "Resource ID Endpoint")]
-        public String ResourceID { get; set; }
+        public string ResourceID { get; set; }
         [Required]
         [Display(Name = "API Version")]
-        public String Version { get; set; }
+        public string Version { get; set; }
         [Required]
         [Display(Name = "Authentication Context Path")]
-        public String Authority { get; set; }
+        public string Authority { get; set; }
     }
 }

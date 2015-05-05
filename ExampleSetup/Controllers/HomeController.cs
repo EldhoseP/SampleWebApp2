@@ -1,48 +1,91 @@
-﻿using ExampleSetup.Manager;
-using ExampleSetup.Manager.AcquiredTokenManager;
-using ExampleSetup.Manager.ApiConnection;
-using ExampleSetup.Manager.AuthenticationContext;
-using ExampleSetup.Manager.ClientCredentials;
-using ExampleSetup.Models;
+﻿using ExampleSetup.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
+
 
 namespace ExampleSetup.Controllers
 {
     public class HomeController : Controller
     {
-        private AcquiredTokenManager AcquiredTokenManager { get; set; }
-        private ApiConnectionManager ApiConnectionManager { get; set; }
-        public HomeController()
-        {
-            AcquiredTokenManager = new DefaultAcquiredTokenManager(new DefaultAuthenticationContextFactory(), new DefaultClientCredentialsFactory());
-            ApiConnectionManager = new DefaultApiConnectionManager(new HttpClient());
-        }
-
-        public HomeController(AcquiredTokenManager tokenManager, ApiConnectionManager apiConnectionManager)
-        {
-            AcquiredTokenManager = tokenManager;
-            ApiConnectionManager = apiConnectionManager;
-
-        }
-
+        /// <summary>
+        /// Presents a form for populating the credentials required to 
+        /// establish a Direct ID API connection.
+        /// </summary>
         public ActionResult Index()
         {
-            CredentialsModel m = new CredentialsModel();
-            return View(m);
+            return View(new CredentialsModel());
         }
 
+        /// <summary>
+        /// Handles the form post submitted by the <see cref="Index"/> view,
+        /// using the supplied credentials
+        /// </summary>
         [HttpPost]
-        public async Task<ViewResult> Connect(CredentialsModel model)
+        public async Task<ViewResult> Connect(CredentialsModel credentials)
         {
-            var token = await ApiConnectionManager.ReturnAPIKey(model.API, AcquiredTokenManager.ReturnOAuthTokenFromResource(model.ClientID, model.SecretKey, model.ResourceID, model.Authority));
+            var userSessionToken = await AcquireUserSessionToken(
+                AcquireOAuthAccessToken(credentials),
+                new Uri(credentials.API));
+            
+            return View("Widget", new WidgetModel(userSessionToken, credentials.Version));
+        }
 
-            return View("Widget", new WidgetModel(token.token, model.Version));
+        /// <summary>
+        /// Obtains an OAuth access token which can then be used to make authorized calls
+        /// to the Direct ID API.
+        /// </summary>
+        /// <remarks>
+        /// <para>The returned value is expected to be included in the authentication header
+        /// of subsequent API requests.</para>
+        /// <para>As the returned value authenticates the application, API calls made using
+        /// this value should only be made using server-side code.</para>
+        /// </remarks>
+        private static string AcquireOAuthAccessToken(CredentialsModel credentials)
+        {
+            var context = new Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext(
+                credentials.Authority);
+
+            var accessToken = context.AcquireToken(
+                credentials.ResourceID,
+                new Microsoft.IdentityModel.Clients.ActiveDirectory.ClientCredential(
+                    credentials.ClientID,
+                    credentials.SecretKey));
+
+            if (accessToken == null)
+            {
+                throw new InvalidOperationException(
+                    "Unable to acquire access token from resource: " + credentials.ResourceID +
+                    ".  Please check your settings from Direct ID.");
+            }
+
+            return accessToken.AccessToken;
+        }
+
+        /// <summary>
+        /// Queries <paramref name="apiEndpoint"/> with an http request
+        /// authorized with <paramref name="authenticationToken"/>.
+        /// </summary>
+        private static async Task<string> AcquireUserSessionToken(
+            string authenticationToken,
+            Uri apiEndpoint)
+        {
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", authenticationToken);
+
+            var response = await httpClient.GetAsync(apiEndpoint);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new InvalidOperationException(
+                    "Unable to acquire access token from endpoint: " + apiEndpoint +
+                    ".  Please check your settings from Direct ID.");
+            }
+
+            var userSessionResponse = await response.Content.ReadAsAsync<UserSessionResponse>();
+            return userSessionResponse.token;
         }
     }
 

@@ -13,8 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{79EE9A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleSetup", "ExampleSetup\ExampleSetup.csproj", "{D2CF4C8E-BA13-42E5-BC79-FE72BFC2D99D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleSetup.Tests", "ExampleSetup.Tests\ExampleSetup.Tests.csproj", "{7B77D35C-22AF-41BC-99DB-FEA7D6ACA0E4}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,10 +23,6 @@ Global
 		{D2CF4C8E-BA13-42E5-BC79-FE72BFC2D99D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2CF4C8E-BA13-42E5-BC79-FE72BFC2D99D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D2CF4C8E-BA13-42E5-BC79-FE72BFC2D99D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7B77D35C-22AF-41BC-99DB-FEA7D6ACA0E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7B77D35C-22AF-41BC-99DB-FEA7D6ACA0E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7B77D35C-22AF-41BC-99DB-FEA7D6ACA0E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7B77D35C-22AF-41BC-99DB-FEA7D6ACA0E4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
