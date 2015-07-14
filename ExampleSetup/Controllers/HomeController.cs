@@ -30,7 +30,7 @@ namespace ExampleSetup.Controllers
                 AcquireOAuthAccessToken(credentials),
                 new Uri(credentials.API));
             
-            return View("Widget", new WidgetModel(userSessionToken, credentials.Version));
+            return View("Widget", new WidgetModel(userSessionToken, credentials.FullCDNPath));
         }
 
         /// <summary>
@@ -45,6 +45,7 @@ namespace ExampleSetup.Controllers
         /// </remarks>
         private static string AcquireOAuthAccessToken(CredentialsModel credentials)
         {
+            TrimCredentialsModel(credentials);
             var context = new Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext(
                 credentials.Authority);
 
@@ -62,6 +63,16 @@ namespace ExampleSetup.Controllers
             }
 
             return accessToken.AccessToken;
+        }
+
+        private static void TrimCredentialsModel(CredentialsModel credentials)
+        {
+            credentials.API = credentials.API.Trim();
+            credentials.Authority = credentials.Authority.Trim();
+            credentials.ClientID = credentials.ClientID.Trim();
+            credentials.ResourceID = credentials.ResourceID.Trim();
+            credentials.SecretKey = credentials.SecretKey.Trim();
+            credentials.FullCDNPath = credentials.FullCDNPath.Trim();
         }
 
         /// <summary>

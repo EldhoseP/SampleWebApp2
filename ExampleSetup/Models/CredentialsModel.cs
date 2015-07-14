@@ -27,8 +27,8 @@ namespace ExampleSetup.Models
         [Display(Name = "Resource ID Endpoint")]
         public string ResourceID { get; set; }
         [Required]
-        [Display(Name = "API Version")]
-        public string Version { get; set; }
+        [Display(Name = "Full CDN Path")]
+        public string FullCDNPath { get; set; }
         [Required]
         [Display(Name = "Authentication Context Path")]
         public string Authority { get; set; }

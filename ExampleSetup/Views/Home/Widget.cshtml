@@ -1,4 +1,4 @@
-@model ExampleSetup.Models.WidgetModel
+﻿@model ExampleSetup.Models.WidgetModel
 <!DOCTYPE html>
 <html>
 
@@ -13,7 +13,7 @@
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,600,700,800,300' rel='stylesheet' type='text/css' />
 
     <!-- DirectID Widget CSS Style -->
-    <link rel="stylesheet" href="https://az708254.vo.msecnd.net/content/@(@Model.Version)/directid.min.css" />
+    <link rel="stylesheet" href="@(@Model.FullCDNPath)/directid.min.css" />
 
 
     <!-- Custom Style -->
@@ -104,7 +104,7 @@
     </div>
 
     <!-- DirectID Widget JS -->
-    <script src="https://az708254.vo.msecnd.net/content/@(@Model.Version)/directid.min.js"></script>
+    <script src="@(@Model.FullCDNPath)/directid.min.js"></script>
 </body>
 
 </html>

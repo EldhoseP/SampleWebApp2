@@ -8,11 +8,11 @@ namespace ExampleSetup.Models
     {
         public string Token { get; private set; }
 
-        public string Version { get; private set; }
+        public string FullCDNPath { get; private set; }
 
-        public WidgetModel(string token, string version)
+        public WidgetModel(string token, string fullCDNPath)
         {
-            this.Version = version;
+            this.FullCDNPath = fullCDNPath;
             this.Token = token;
         }
     }

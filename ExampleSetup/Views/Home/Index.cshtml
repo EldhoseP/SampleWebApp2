@@ -1,4 +1,4 @@
-@model ExampleSetup.Models.CredentialsModel
+﻿@model ExampleSetup.Models.CredentialsModel
 <!DOCTYPE html>
 <html>
 
@@ -90,7 +90,7 @@
                         @Html.LabelFor(m => m.API) @Html.TextBoxFor(m => m.API, new {@class="form-control"})
                     </div>
                     <div class="form-group">
-                        @Html.LabelFor(m => m.Version) @Html.TextBoxFor(m => m.Version, new {@class="form-control"})
+                        @Html.LabelFor(m => m.FullCDNPath) @Html.TextBoxFor(m => m.FullCDNPath, new { @class = "form-control" })
                     </div>
                     <div class="form-group">
                         @Html.LabelFor(m => m.ResourceID) @Html.TextBoxFor(m => m.ResourceID, new {@class="form-control"})
