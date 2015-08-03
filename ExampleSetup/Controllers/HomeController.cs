@@ -58,14 +58,6 @@ namespace ExampleSetup.Controllers
             return View(PopulateIndividualDetailsModel(await getJson(IndividualDetailsUrl + reference)));
         }
 
-        [HttpPost]
-        public async Task<ActionResult> WebHook()
-        {
-            string userId = Request["didref"];
-
-            return new HttpStatusCodeResult(HttpStatusCode.OK);
-        }
-
         /// <summary>
         /// Obtains an OAuth access token which can then be used to make authorized calls
         /// to the Direct ID API.
