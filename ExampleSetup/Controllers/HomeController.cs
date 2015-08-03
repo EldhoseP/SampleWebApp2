@@ -1,15 +1,25 @@
 ﻿using ExampleSetup.Models;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using Newtonsoft.Json.Linq;
 
 
 namespace ExampleSetup.Controllers
 {
     public class HomeController : Controller
     {
+        private const string IndividualSummaryUrl ="https://api-beta.direct.id:444/v1/individuals";
+        private const string IndividualDetailsUrl = "https://api-beta.direct.id:444/v1/individual/";
+
+        private static string _authenticationToken;
+
         /// <summary>
         /// Presents a form for populating the credentials required to 
         /// establish a Direct ID API connection.
@@ -26,11 +36,34 @@ namespace ExampleSetup.Controllers
         [HttpPost]
         public async Task<ViewResult> Connect(CredentialsModel credentials)
         {
-            var userSessionToken = await AcquireUserSessionToken(
-                AcquireOAuthAccessToken(credentials),
-                new Uri(credentials.API));
-            
+            _authenticationToken = AcquireOAuthAccessToken(credentials);
+            var userSessionToken = await AcquireUserSessionToken(_authenticationToken, new Uri(credentials.API));
+
             return View("Widget", new WidgetModel(userSessionToken, credentials.FullCDNPath));
+        }
+
+        /// <summary>
+        /// Load a Individuals Summary page
+        /// </summary>
+        public async Task<ViewResult> IndividualsSummary()
+        {
+            return View(PopulateIndividualsSummaryModel(await getJson(IndividualSummaryUrl)));
+        }
+
+        /// <summary>
+        /// Load a Individuals Details page
+        /// </summary>
+        public async Task<ViewResult> IndividualDetails(string reference)
+        {
+            return View(PopulateIndividualDetailsModel(await getJson(IndividualDetailsUrl + reference)));
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> WebHook()
+        {
+            string userId = Request["didref"];
+
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
 
         /// <summary>
@@ -72,7 +105,7 @@ namespace ExampleSetup.Controllers
             credentials.ClientID = credentials.ClientID.Trim();
             credentials.ResourceID = credentials.ResourceID.Trim();
             credentials.SecretKey = credentials.SecretKey.Trim();
-            credentials.FullCDNPath = credentials.FullCDNPath.Trim();
+            credentials.FullCDNPath = credentials.FullCDNPath.Trim(new Char[] { ' ', '/' });
         }
 
         /// <summary>
@@ -97,6 +130,84 @@ namespace ExampleSetup.Controllers
 
             var userSessionResponse = await response.Content.ReadAsAsync<UserSessionResponse>();
             return userSessionResponse.token;
+        }
+
+        /// <summary>
+        /// Getting Json using authorization token
+        /// </summary>
+        private async Task<string> getJson(string url)
+        {
+            // Connecting using a authentication token (OAuthorization)
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _authenticationToken);
+            string rawJson = await httpClient.GetStringAsync(url);
+
+            return rawJson;
+        }
+
+        private static List<IndividualsSummary> PopulateIndividualsSummaryModel(string json)
+        {
+            var parsedJson = JObject.Parse(json);
+            List<IndividualsSummary> individuals = new List<IndividualsSummary>();
+
+            foreach (var item in parsedJson["Individuals"])
+            {
+                string reference = (string)item["Reference"];
+                string timestamp = (string)item["Timestamp"];
+                string name = (string)item["Name"];
+                string emailAddress = (string)item["EmailAddress"];
+                string userId = (string)item["UserID"];
+                IndividualsSummary individual = new IndividualsSummary(reference, timestamp, name, emailAddress, userId);
+                individuals.Add(individual);
+            }
+
+            return individuals;
+        }
+
+        private static IndividualDetails PopulateIndividualDetailsModel(string json)
+        {
+            dynamic parsedJson = JObject.Parse(json);
+            string reference = parsedJson.Individual["Reference"];
+            var providers = parsedJson.Individual.Global.Bank.Providers[0];
+            string provider = providers["Provider"];
+            var accountsJson = providers.Accounts;
+
+            var accounts = new List<AccountDetails>();
+
+            GetAccounts(accountsJson, accounts);
+
+            return new IndividualDetails(reference, provider, accounts);
+        }
+
+        private static void GetAccounts(dynamic accountsJson, List<AccountDetails> accounts)
+        {
+            foreach (var item in accountsJson)
+            {
+                string accountName = (string) item["AccountName"];
+                string accountHolder = (string) item["AccountHolder"];
+                string accountType = (string) item["AccountType"];
+                string activityAvailableFrom = (string) item["ActivityAvailableFrom"];
+                string accountNumber = (string) item["AccountNumber"];
+                string sortCode = (string) item["SortCode"];
+                string balance = (string) item["Balance"];
+                string balanceFormatted = (string) item["BalanceFormatted"];
+                string currencyCode = (string) item["CurrencyCode"];
+                string verifiedOn = (string) item["VerifiedOn"];
+
+                var transactions = new List<Transaction>();
+                foreach (var details in item["Transactions"])
+                {
+                    string date = (string) details["Date"];
+                    string description = (string) details["Description"];
+                    string amount = (string) details["Amount"];
+                    string type = (string) details["Type"];
+                    transactions.Add(new Transaction(date, description, amount, type));
+                }
+
+                var accountDetails = new AccountDetails(accountName, accountHolder, accountType, activityAvailableFrom,
+                    accountNumber, sortCode, balance, balanceFormatted, currencyCode, verifiedOn, transactions);
+                accounts.Add(accountDetails);
+            }
         }
     }
 
