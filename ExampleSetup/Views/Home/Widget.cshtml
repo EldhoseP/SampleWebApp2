@@ -1,4 +1,5 @@
-﻿@model ExampleSetup.Models.WidgetModel
+﻿@using System.Web.UI.WebControls
+@model ExampleSetup.Models.WidgetModel
 <!DOCTYPE html>
 <html>
 
@@ -78,7 +79,7 @@
             <header class="row">
                 <div id="widget-header" class="col-xs-10 col-xs-offset-1 col-sm-10 col-sm-offset-1">
                     <h1>Well Done!</h1>
-                    <legend>You Have Successfully Set Up The API Widget</legend>
+                    <legend>You Have Successfully Set Up The UserSessionEndpoint Widget</legend>
                 </div>
             </header>
             <div class="row">
@@ -94,9 +95,11 @@
 
         <div class="row">
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-1">
-                @using (Html.BeginForm("IndividualsSummary", "Home"))
+
+                @using (Html.BeginForm("IndividualsSummary", "Home", new { Summary = Model.IndividualSummaryEndpoint,  role = "form" }, FormMethod.Post, null))
                 {
-                    <button type="submit" class="btn pull-right">Show Previously Verified Users <i class="fa fa-arrow-circle-right"></i> </button>
+                    
+                    <button type="submit" name="reference" class="btn">Please click here to see previous Verifications<i class="fa fa-external-link"></i></button>
                 }
             </div>
         </div>

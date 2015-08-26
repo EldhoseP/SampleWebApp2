@@ -2,7 +2,7 @@
 {
     /// <summary>
     /// Defines the expected format of the response from an authenticated request
-    /// to <see cref="CredentialsModel.API"/>.
+    /// to <see cref="CredentialsModel.UserSessionEndpoint"/>.
     /// </summary>
     public class UserSessionResponse
     {

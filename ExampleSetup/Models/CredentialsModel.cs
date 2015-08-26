@@ -8,8 +8,13 @@ namespace ExampleSetup.Models
     public class CredentialsModel
     {
         [Required]
-        [Display(Name = "API Endpoint")]
-        public string API { get; set; }
+        [Display(Name = "User Session Endpoint")]
+        public string UserSessionEndpoint { get; set; }
+
+        [Required]
+        [Display(Name = "Individual Summary Endpoint")]
+        public string IndividualSummaryEndpoint { get; set; }
+
         [Required]
         [Display(Name = "Client ID")]
         public string ClientID { get; set; }
@@ -17,7 +22,7 @@ namespace ExampleSetup.Models
         /// <remarks>
         /// To help ensure that the application is secure, this secret key should never
         /// appear in client-side code.
-        /// In other words, API calls made using this value should only be made using
+        /// In other words, UserSessionEndpoint calls made using this value should only be made using
         /// server-side code.
         /// </remarks>
         [Required]

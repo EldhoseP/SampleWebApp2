@@ -94,10 +94,11 @@
                                 <td>@item.Timestamp</td>
                                 <td>@item.UserID</td>
                                 <td>
-                                    @using (Html.BeginForm("IndividualDetails", "Home", FormMethod.Post))
-                                         {
-                                             <button type="submit" name="reference" class="btn" value="@item.Reference"><i class="fa fa-external-link"></i></button>
-                                         }
+                                    
+                                    @using (Html.BeginForm("IndividualDetails", "Home", new { Link = item.Link, role = "form" }, FormMethod.Post))
+                                    {
+                                        <button type="submit" name="reference" class="btn" ><i class="fa fa-external-link"></i></button>
+                                    }
                                 </td>
                             </tr>
                         }
