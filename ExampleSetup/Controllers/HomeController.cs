@@ -1,16 +1,13 @@
-﻿using ExampleSetup.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using ExampleSetup.Models;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Newtonsoft.Json.Linq;
-
 
 namespace ExampleSetup.Controllers
 {
@@ -19,8 +16,8 @@ namespace ExampleSetup.Controllers
         private static string _authenticationToken;
 
         /// <summary>
-        /// Presents a form for populating the credentials required to 
-        /// establish a Direct ID UserSessionEndpoint connection.
+        ///     Presents a form for populating the credentials required to
+        ///     establish a Direct ID UserSessionEndpoint connection.
         /// </summary>
         public ActionResult Index()
         {
@@ -28,20 +25,22 @@ namespace ExampleSetup.Controllers
         }
 
         /// <summary>
-        /// Handles the form post submitted by the <see cref="Index"/> view,
-        /// using the supplied credentials
+        ///     Handles the form post submitted by the <see cref="Index" /> view,
+        ///     using the supplied credentials
         /// </summary>
         [HttpPost]
         public async Task<ViewResult> Connect(CredentialsModel credentials)
         {
             _authenticationToken = AcquireOAuthAccessToken(credentials);
-            var userSessionToken = await AcquireUserSessionToken(_authenticationToken, new Uri(credentials.UserSessionEndpoint));
+            var userSessionToken =
+                await AcquireUserSessionToken(_authenticationToken, new Uri(credentials.UserSessionEndpoint));
 
-            return View("Widget", new WidgetModel(userSessionToken, credentials.FullCDNPath, credentials.IndividualSummaryEndpoint));
+            return View("Widget",
+                new WidgetModel(userSessionToken, credentials.FullCDNPath, credentials.IndividualSummaryEndpoint));
         }
 
         /// <summary>
-        /// Load a Individuals Summary page
+        ///     Load a Individuals Summary page
         /// </summary>
         [HttpPost]
         public ViewResult IndividualsSummary(WidgetModel model, string Summary)
@@ -50,7 +49,7 @@ namespace ExampleSetup.Controllers
         }
 
         /// <summary>
-        /// Load a Individuals Details page
+        ///     Load a Individuals Details page
         /// </summary>
         public ActionResult IndividualDetails(string Link)
         {
@@ -58,24 +57,28 @@ namespace ExampleSetup.Controllers
         }
 
         /// <summary>
-        /// Obtains an OAuth access token which can then be used to make authorized calls
-        /// to the Direct ID UserSessionEndpoint.
+        ///     Obtains an OAuth access token which can then be used to make authorized calls
+        ///     to the Direct ID UserSessionEndpoint.
         /// </summary>
         /// <remarks>
-        /// <para>The returned value is expected to be included in the authentication header
-        /// of subsequent UserSessionEndpoint requests.</para>
-        /// <para>As the returned value authenticates the application, UserSessionEndpoint calls made using
-        /// this value should only be made using server-side code.</para>
+        ///     <para>
+        ///         The returned value is expected to be included in the authentication header
+        ///         of subsequent UserSessionEndpoint requests.
+        ///     </para>
+        ///     <para>
+        ///         As the returned value authenticates the application, UserSessionEndpoint calls made using
+        ///         this value should only be made using server-side code.
+        ///     </para>
         /// </remarks>
         private static string AcquireOAuthAccessToken(CredentialsModel credentials)
         {
             TrimCredentialsModel(credentials);
-            var context = new Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext(
+            var context = new AuthenticationContext(
                 credentials.Authority);
 
             var accessToken = context.AcquireToken(
                 credentials.ResourceID,
-                new Microsoft.IdentityModel.Clients.ActiveDirectory.ClientCredential(
+                new ClientCredential(
                     credentials.ClientID,
                     credentials.SecretKey));
 
@@ -96,13 +99,13 @@ namespace ExampleSetup.Controllers
             credentials.ClientID = credentials.ClientID.Trim();
             credentials.ResourceID = credentials.ResourceID.Trim();
             credentials.SecretKey = credentials.SecretKey.Trim();
-            credentials.FullCDNPath = credentials.FullCDNPath.Trim(new Char[] { ' ', '/' });
-            credentials.IndividualSummaryEndpoint = credentials.IndividualSummaryEndpoint.Trim(new Char[] { ' ', '/' });
+            credentials.FullCDNPath = credentials.FullCDNPath.Trim(' ', '/');
+            credentials.IndividualSummaryEndpoint = credentials.IndividualSummaryEndpoint.Trim(' ', '/');
         }
 
         /// <summary>
-        /// Queries <paramref name="apiEndpoint"/> with an http request
-        /// authorized with <paramref name="authenticationToken"/>.
+        ///     Queries <paramref name="apiEndpoint" /> with an http request
+        ///     authorized with <paramref name="authenticationToken" />.
         /// </summary>
         private static async Task<string> AcquireUserSessionToken(
             string authenticationToken,
@@ -125,14 +128,15 @@ namespace ExampleSetup.Controllers
         }
 
         /// <summary>
-        /// Getting Json using authorization token
+        ///     Getting Json using authorization token
         /// </summary>
         private string getJson(string summary)
         {
             var endpoint = HttpUtility.HtmlDecode(Decoder.DecodeForwardSlashes(summary));
             using (var httpClient = new HttpClient())
             {
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _authenticationToken);
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+                    _authenticationToken);
                 return httpClient.GetAsync(endpoint).Result.Content.ReadAsStringAsync().Result;
             }
         }
@@ -143,7 +147,9 @@ namespace ExampleSetup.Controllers
             var individuals = new List<IndividualsSummary>();
             foreach (var item in parsedJson["Individuals"])
             {
-                individuals.Add(new IndividualsSummary(((string)item["Reference"]), ((string)item["Timestamp"]), ((string)item["Name"]), ((string)item["EmailAddress"]), ((string)item["UserID"]), RemoveSFromSummary(summary) + "/" + ((string)item["Reference"])));
+                individuals.Add(new IndividualsSummary((string) item["Reference"], (string) item["Timestamp"],
+                    (string) item["Name"], (string) item["EmailAddress"], (string) item["UserID"],
+                    RemoveSFromSummary(summary) + "/" + (string) item["Reference"]));
             }
 
             return individuals;
@@ -162,7 +168,7 @@ namespace ExampleSetup.Controllers
             var accountsJson = providers.Accounts;
             var accounts = new List<AccountDetails>();
             GetAccounts(accountsJson, accounts);
-            return new IndividualDetails(((string)parsedJson.Individual["Reference"]), provider, accounts);
+            return new IndividualDetails((string) parsedJson.Individual["Reference"], provider, accounts);
         }
 
         private static void GetAccounts(dynamic accountsJson, List<AccountDetails> accounts)
@@ -172,14 +178,33 @@ namespace ExampleSetup.Controllers
                 var transactions = new List<Transaction>();
                 foreach (var details in item["Transactions"])
                 {
-                    transactions.Add(new Transaction(((string)details["Date"]), ((string)details["Description"]), ((string)details["Amount"]), ((string)details["Type"])));
+                    transactions.Add(new Transaction((string) details["Date"],
+                        (string) details["Description"],
+                        (string) details["Amount"], 
+                        (string) details["Type"],
+                        (string) details["Balance"],
+                        (string) details["Category"],
+                        (string) details["CategoryId"],
+                        (string) details["CategoryType"],
+                        (string)details["CategorizationKeyword"]
+                        ));
                 }
 
-                var accountDetails = new AccountDetails(((string)item["AccountName"]), ((string)item["AccountHolder"]), ((string)item["AccountType"]), ((string)item["ActivityAvailableFrom"]),
-                     ((string)item["AccountNumber"]), ((string)item["SortCode"]), ((string)item["Balance"]), ((string)item["BalanceFormatted"]), ((string)item["CurrencyCode"]), ((string)item["VerifiedOn"]), transactions);
+                var accountDetails = new AccountDetails((string) item["AccountName"], 
+                    (string) item["AccountHolder"],
+                    (string) item["AccountType"],
+                    (string) item["ActivityAvailableFrom"],
+                    (string) item["AccountNumber"],
+                    (string) item["SortCode"],
+                    (string) item["Balance"],
+                    (string) item["BalanceFormatted"], 
+                    (string) item["OpeningBalance"],
+                    (string) item["OpeningBalanceFormatted"],
+                    (string) item["CurrencyCode"],
+                    (string) item["VerifiedOn"],
+                    transactions);
                 accounts.Add(accountDetails);
             }
         }
     }
-
 }

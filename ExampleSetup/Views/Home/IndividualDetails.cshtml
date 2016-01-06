@@ -119,6 +119,14 @@
                                 <td>@account.BalanceFormatted</td>
                             </tr>
                             <tr>
+                                <td>Opening Balance</td>
+                                <td>@account.OpeningBalance</td>
+                            </tr>
+                            <tr>
+                                <td>Opening Balance Formatted</td>
+                                <td>@account.OpeningBalanceFormatted</td>
+                            </tr>
+                            <tr>
                                 <td>Currency Code</td>
                                 <td>@account.CurrencyCode</td>
                             </tr>
@@ -137,6 +145,11 @@
                                     <td>Description</td>
                                     <td>Amount</td>
                                     <td>Type</td>
+                                    <td>Balance</td>
+                                    <td>Category</td>
+                                    <td>CategoryId</td>
+                                    <td>CategoryType</td>
+                                    <td>CategorizationKeyword</td>
                                 </tr>
                                 </thead>
                                 @foreach (ExampleSetup.Models.Transaction transaction in account.Transactions)
@@ -146,6 +159,11 @@
                                         <td>@transaction.Description</td>
                                         <td>@transaction.Amount</td>
                                         <td>@transaction.Type</td>
+                                        <td>@transaction.Balance</td>
+                                        <td>@transaction.Category</td>
+                                        <td>@transaction.CategoryId</td>
+                                        <td>@transaction.CategoryType</td>
+                                        <td>@transaction.CategorizationKeyword</td>
                                     </tr>
                                 }
                             </table>

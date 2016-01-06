@@ -23,25 +23,43 @@ namespace ExampleSetup.Models
 
         public string BalanceFormatted { get; set; }
 
+        public string OpeningBalance { get; set; }
+
+        public string OpeningBalanceFormatted { get; set; }
+
         public List<Transaction> Transactions { get; set; }
 
         public string CurrencyCode { get; set; }
 
         public string VerifiedOn { get; set; }
 
-        public AccountDetails(string accountName, string accountHolder, string accountType, string activityAvailableFrom, string accountNumber, string sortCode, string balance, string balanceFormatted, string currencyCode, string verifiedOn, List<Transaction> transactions)
+        public AccountDetails(string accountName, 
+            string accountHolder,
+            string accountType, 
+            string activityAvailableFrom,
+            string accountNumber,
+            string sortCode, 
+            string balance,
+            string balanceFormatted, 
+            string openingBalance,
+            string openingBalanceFormatted, 
+            string currencyCode,
+            string verifiedOn, 
+            List<Transaction> transactions)
         {
-            this.AccountName = accountName;
-            this.AccountHolder = accountHolder;
-            this.AccountType = accountType;
-            this.ActivityAvailableFrom = activityAvailableFrom;
-            this.AccountNumber = accountNumber;
-            this.SortCode = sortCode;
-            this.Balance = balance;
-            this.BalanceFormatted = balanceFormatted;
-            this.CurrencyCode = currencyCode;
-            this.VerifiedOn = verifiedOn;
-            this.Transactions = transactions;
+            AccountName = accountName;
+            AccountHolder = accountHolder;
+            AccountType = accountType;
+            ActivityAvailableFrom = activityAvailableFrom;
+            AccountNumber = accountNumber;
+            SortCode = sortCode;
+            Balance = balance;
+            BalanceFormatted = balanceFormatted;
+            OpeningBalance = openingBalance;
+            OpeningBalanceFormatted = openingBalanceFormatted;
+            CurrencyCode = currencyCode;
+            VerifiedOn = verifiedOn;
+            Transactions = transactions;
         }
     }
 }
