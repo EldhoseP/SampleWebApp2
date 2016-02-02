@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 
 namespace ExampleSetup.Models
 {
@@ -13,11 +10,13 @@ namespace ExampleSetup.Models
 
         public List<AccountDetails> Accounts { get; set; }
 
-        public IndividualDetails(string reference, string provider, List<AccountDetails> accounts)
+        public IndividualDetails(string reference,
+            string provider,
+            List<AccountDetails> accounts)
         {
-            this.Reference = reference;
-            this.Provider = provider;
-            this.Accounts = accounts;
+            Reference = reference;
+            Provider = provider;
+            Accounts = accounts;
         }
     }
 }
