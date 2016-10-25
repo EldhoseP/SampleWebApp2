@@ -19,14 +19,20 @@ namespace ExampleSetup.Models
 
         public string UserID { get; set; }
 
-        public IndividualsSummary(string reference, string timestamp, string name, string emailAddress, string userId, string link)
+        public IndividualsSummary(
+            string reference,
+            string timestamp,
+            string name,
+            string emailAddress,
+            string userId,
+            string link)
         {
-            this.Reference = reference;
-            this.Timestamp = timestamp;
-            this.Name = name;
-            this.EmailAddress = emailAddress;
-            this.UserID = userId;
-            this.Link = link;
+            Reference = reference;
+            Timestamp = timestamp;
+            Name = name;
+            EmailAddress = emailAddress;
+            UserID = userId;
+            Link = link;
         }
     }
 }

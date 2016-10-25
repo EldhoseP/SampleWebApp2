@@ -18,11 +18,13 @@ namespace ExampleSetup.Models
         {
             
         }
+
         public WidgetModel(string token, string fullCDNPath, string individualSummaryEndpoint)
         {
-            this.FullCDNPath = fullCDNPath;
-            this.Token = token;
-            this.IndividualSummaryEndpoint = HttpUtility.HtmlEncode(Decoder.EncodeForwardSlashes(individualSummaryEndpoint));
+            FullCDNPath = fullCDNPath;
+            Token = token;
+            IndividualSummaryEndpoint =
+                HttpUtility.HtmlEncode(Decoder.EncodeForwardSlashes(individualSummaryEndpoint));
         }
 
     }

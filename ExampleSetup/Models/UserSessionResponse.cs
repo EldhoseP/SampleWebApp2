@@ -14,7 +14,6 @@
         /// attribute of a #did div element.
         /// </remarks>
         public string token { get; set; }
-        public string fullCDNPath { get; set; }
+        public string reference { get; set; }
     }
-
 }
