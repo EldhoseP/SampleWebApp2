@@ -21,8 +21,16 @@
         public string CategorizationKeyword { get; set; }
 
 
-        public Transaction(string date, string description, string amount, string type, string balance,
-            string category, string categoryId, string categoryType, string categorizationKeyword)
+        public Transaction(
+            string date,
+            string description,
+            string amount,
+            string type,
+            string balance,
+            string category,
+            string categoryId,
+            string categoryType,
+            string categorizationKeyword)
 
         {
             Date = date;
